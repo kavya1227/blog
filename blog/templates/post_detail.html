@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}">
+    {% endif %}
+    <p>By {{ post.author.username }} on {{ post.created_at }}</p>
+    <p>Likes: {{ post.total_likes }}</p>
+    <form action="{% url 'like_post' post.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">
+            {% if is_liked %}
+                Unlike
+            {% else %}
+                Like
+            {% endif %}
+        </button>
+    </form>
+    <h3>Comments</h3>
+    <ul>
+        {% for comment in post.comments.all %}
+            <li>{{ comment.content }} by {{ comment.author.username }} on {{ comment.created_at }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Add a Comment</h3>
+    <form method="post" action="{% url 'add_comment' post.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Comment</button>
+    </form>
+{% endblock %}
